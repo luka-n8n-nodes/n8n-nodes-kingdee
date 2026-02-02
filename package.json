@@ -1,0 +1,68 @@
+{
+  "name": "@luka-cat-mimi/n8n-nodes-kingdee",
+  "version": "0.0.1",
+  "description": "金蝶云星空 N8N 集成插件",
+  "keywords": [
+    "n8n",
+    "n8n-node",
+    "n8n-community-node-package",
+    "kingdee",
+    "金蝶",
+    "金蝶云星空"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "homepage": "https://github.com/luka-n8n-nodes/n8n-nodes-kingdee#readme",
+  "author": {
+    "name": "luka-cat",
+    "email": "luka.cat.mimi@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luka-n8n-nodes/n8n-nodes-kingdee.git"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "npx rimraf dist && tsc && gulp build:assets",
+    "dev": "tsc --watch",
+    "format": "prettier credentials nodes --write",
+    "lint": "eslint \"credentials/**/*.ts\" \"nodes/**/*.ts\" package.json",
+    "lintfix": "eslint \"credentials/**/*.ts\" \"nodes/**/*.ts\" package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/KingdeeAppAuthApi.credentials.js",
+      "dist/credentials/KingdeePasswordApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Kingdee/Kingdee.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "*",
+    "@types/node": "^20.0.0",
+    "eslint": "9.32.0",
+    "form-data": "^4.0.1",
+    "glob": "^10.4.5",
+    "gulp": "^5.0.0",
+    "prettier": "3.6.2",
+    "release-it": "^19.0.4",
+    "require-glob": "^4.1.0",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}

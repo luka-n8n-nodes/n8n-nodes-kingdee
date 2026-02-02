@@ -1,0 +1,53 @@
+name: 持续集成
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 运行代码检查
+        run: npm run lint
+
+      - name: 检查代码格式
+        run: npm run format -- --check
+
+      - name: 构建项目
+        run: npm run build
+
+      - name: 检查构建产物
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "❌ 构建失败：dist目录不存在"
+            exit 1
+          fi
+          if [ ! -f "dist/nodes/Kingdee/Kingdee.node.js" ]; then
+            echo "❌ 构建失败：主要节点文件不存在"
+            exit 1
+          fi
+          if [ ! -f "dist/credentials/KingdeeAppAuthApi.credentials.js" ]; then
+            echo "❌ 构建失败：凭据文件 KingdeeAppAuthApi.credentials.js 不存在"
+            exit 1
+          fi
+          if [ ! -f "dist/credentials/KingdeePasswordApi.credentials.js" ]; then
+            echo "❌ 构建失败：凭据文件 KingdeePasswordApi.credentials.js 不存在"
+            exit 1
+          fi
+          echo "✅ 构建成功，所有必要文件都已生成"
