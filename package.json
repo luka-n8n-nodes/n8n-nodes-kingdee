@@ -1,6 +1,6 @@
 {
   "name": "@luka-cat-mimi/n8n-nodes-kingdee",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "金蝶云星空 N8N 集成插件",
   "keywords": [
     "n8n",
