@@ -18,6 +18,69 @@
 - ✅ 响应数据自动处理（日期格式、多语言字段）
 - ✅ 支持批量并发请求
 
+## 支持的资源与操作
+
+### 系统用户 (SEC_User)
+
+| 操作 | 说明 |
+|------|------|
+| 查询 | 批量查询系统用户列表，支持分页、过滤条件、字段选择 |
+| 更新 | 更新系统用户信息，支持按编码或内码更新 |
+| 禁用 | 禁用系统用户账户，支持批量操作 |
+| 反禁用 | 启用已禁用的系统用户账户，支持批量操作 |
+
+**常用字段：**
+- `FUserID` - 用户内码
+- `FNumber` - 用户编码
+- `FName` - 用户名称
+- `FUserAccount` - 用户账号
+- `FPhone` - 手机号码
+- `FEmail` - 邮箱
+- `FForbidStatus` - 禁用状态（A=正常, B=禁用）
+- `FIsLocked` - 是否锁定
+
+### 员工 (BD_Empinfo)
+
+| 操作 | 说明 |
+|------|------|
+| 查看 | 查看单个员工详情，支持按编码或内码查询 |
+| 查询 | 批量查询员工列表，支持分页、过滤条件、字段选择 |
+| 禁用 | 禁用员工账户，支持批量操作 |
+| 反禁用 | 启用已禁用的员工账户，支持批量操作 |
+
+**常用字段：**
+- `FID` - 员工内码
+- `FNumber` - 员工编码
+- `FName` - 员工姓名
+- `FPhone` - 联系电话
+- `FEmail` - 邮箱
+- `FForbidStatus` - 禁用状态
+- `FDeptId` - 所属部门
+
+## 过滤条件语法
+
+查询操作支持 SQL 风格的过滤条件：
+
+```sql
+-- 单条件查询
+FForbidStatus = 'A'
+
+-- 模糊查询
+FName LIKE '%张%'
+
+-- 多条件 AND
+FForbidStatus = 'A' AND FIsLocked = 0
+
+-- 多条件 OR（并集查询）
+FUserAccount = '111' OR FEmail = '222'
+
+-- IN 查询
+FUserAccount IN ('user1', 'user2', 'user3')
+
+-- 复合条件
+(FUserAccount = '111' OR FEmail LIKE '%@company.com') AND FForbidStatus = 'A'
+```
+
 ## 凭证类型
 
 ### 应用授权凭证（推荐）
