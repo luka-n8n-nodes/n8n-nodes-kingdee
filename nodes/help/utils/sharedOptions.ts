@@ -97,7 +97,7 @@ export const queryOptions: INodeProperties = {
 	type: 'collection',
 	placeholder: 'Add option',
 	default: {},
-	options: [batchingOption, timeoutOption, transformDataOption],
+	options: [timeoutOption, transformDataOption],
 };
 
 /**
