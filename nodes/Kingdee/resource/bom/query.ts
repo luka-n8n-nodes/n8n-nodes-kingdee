@@ -16,8 +16,6 @@ const BOM_FIELD_OPTIONS = [
 	{ name: '名称 (FName)', value: 'FName' },
 	{ name: '物料编码 (FMaterialId.FNumber)', value: 'FMaterialId.FNumber' },
 	{ name: '物料名称 (FMaterialId.FName)', value: 'FMaterialId.FName' },
-	{ name: 'BOM版本 (FBOMVersion)', value: 'FBOMVersion' },
-	{ name: 'BOM类型 (FBOMType)', value: 'FBOMType' },
 	{ name: '单位编码 (FUnitId.FNumber)', value: 'FUnitId.FNumber' },
 	{ name: '单位名称 (FUnitId.FName)', value: 'FUnitId.FName' },
 	{ name: '基本数量 (FBaseQty)', value: 'FBaseQty' },
@@ -49,6 +47,14 @@ const operation: ResourceOperations = {
 			description: '选择需要查询的字段',
 		} as INodeProperties,
 		{
+			displayName: '自定义查询字段',
+			name: 'customFieldKeys',
+			type: 'string',
+			default: '',
+			description:
+				'额外的自定义查询字段，支持逗号分隔的字符串或表达式数组。示例：FField1,FField2。会与上方选择的字段合并去重',
+		} as INodeProperties,
+		{
 			displayName: '过滤条件',
 			name: 'filterString',
 			type: 'string',
@@ -69,13 +75,24 @@ const operation: ResourceOperations = {
 	call: async function (index) {
 		const returnAll = this.getNodeParameter('returnAll', index, false) as boolean;
 		const fieldKeysArray = this.getNodeParameter('fieldKeys', index, DEFAULT_FIELD_KEYS) as string[];
+		const customFieldKeys = this.getNodeParameter('customFieldKeys', index, '') as string | string[];
 		const filterString = this.getNodeParameter('filterString', index, '') as string;
 		const orderString = this.getNodeParameter('orderString', index, '') as string;
 
 		const options = this.getNodeParameter('options', index, {}) as ICommonOptionsValue;
 		const transformData = options.transformData !== false;
 
-		const fieldKeys = fieldKeysArray.join(',');
+		let customFields: string[] = [];
+		if (customFieldKeys) {
+			if (Array.isArray(customFieldKeys)) {
+				customFields = customFieldKeys.map((f) => String(f).trim()).filter((f) => f);
+			} else if (typeof customFieldKeys === 'string') {
+				customFields = customFieldKeys.split(',').map((f) => f.trim()).filter((f) => f);
+			}
+		}
+
+		const allFieldKeysArray = [...new Set([...fieldKeysArray, ...customFields])];
+		const fieldKeys = allFieldKeysArray.join(',');
 
 		const buildRequestData = (limit: number, start: number) => ({
 			FormId: FORM_ID,
@@ -88,7 +105,7 @@ const operation: ResourceOperations = {
 
 		const processResult = (result: any) => {
 			if (transformData && Array.isArray(result)) {
-				return transformArrayToObject(result, fieldKeysArray);
+				return transformArrayToObject(result, allFieldKeysArray);
 			}
 			return result;
 		};
