@@ -61,7 +61,6 @@ const operation: ResourceOperations = {
 
 		const buildRequestData = (limit: number, start: number) => {
 			const data: Record<string, any> = {
-				FormId: FORM_ID,
 				FieldKeys: fieldKeys,
 				StartRow: start,
 				Limit: limit,
@@ -78,38 +77,49 @@ const operation: ResourceOperations = {
 			return data;
 		};
 
-		const processResult = (result: any) => {
-			if (transformData && fieldKeys && Array.isArray(result)) {
-				return transformArrayToObject(result, fieldKeys.split(',').map((k) => k.trim()));
+		// 提取响应中的数据行：兼容 { Rows: [...] } 包装结构与直接返回数组两种情况
+		const extractRows = (result: any): any[] => {
+			if (result && Array.isArray(result.Rows)) return result.Rows;
+			if (Array.isArray(result)) return result;
+			return [];
+		};
+
+		const transformRows = (rows: any[]) => {
+			if (transformData && fieldKeys && Array.isArray(rows)) {
+				return transformArrayToObject(rows, fieldKeys.split(',').map((k) => k.trim()));
 			}
-			return result;
+			return rows;
 		};
 
 		if (returnAll) {
-			const allResults: any[] = [];
+			const allRows: any[] = [];
 			const pageSize = 2000;
 			let currentStart = 0;
-			let hasMore = true;
+			let totalRowCount = Number.POSITIVE_INFINITY;
 
-			while (hasMore) {
+			while (currentStart < totalRowCount) {
 				const data = buildRequestData(pageSize, currentStart);
 				const result = await RequestUtils.call.call(
 					this,
 					'DynamicFormService',
 					'GetSysReportData',
-					[data],
+					[FORM_ID, data],
 				);
 
-				if (Array.isArray(result) && result.length > 0) {
-					allResults.push(...result);
-					currentStart += result.length;
-					hasMore = result.length >= pageSize;
-				} else {
-					hasMore = false;
+				if (typeof result?.RowCount === 'number') {
+					totalRowCount = result.RowCount;
 				}
+
+				const rows = extractRows(result);
+				if (rows.length === 0) break;
+
+				allRows.push(...rows);
+				currentStart += rows.length;
+
+				if (rows.length < pageSize) break;
 			}
 
-			return processResult(allResults);
+			return transformRows(allRows);
 		} else {
 			const limit = this.getNodeParameter('limit', index, 100) as number;
 			const data = buildRequestData(limit, 0);
@@ -118,9 +128,9 @@ const operation: ResourceOperations = {
 				this,
 				'DynamicFormService',
 				'GetSysReportData',
-				[data],
+				[FORM_ID, data],
 			);
-			return processResult(result);
+			return transformRows(extractRows(result));
 		}
 	},
 };

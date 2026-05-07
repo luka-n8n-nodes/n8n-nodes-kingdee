@@ -142,6 +142,12 @@
 | 销售普通发票 | IV_SALESOC | 查看、查询 |
 | 金税开票单 | IV_GTINVOICE | 查看、查询 |
 
+### 成本管理 - 存货核算
+
+| 资源 | 操作 | FormId | 说明 |
+|------|------|--------|------|
+| 成本管理 | 存货收发存汇总表（按日期） | HS_INOUTSTOCKSUMMARYBYDATERPT | 查询报表数据 (GetSysReportData) |
+
 ### 操作说明
 
 | 操作 | API 方法 | 说明 |
