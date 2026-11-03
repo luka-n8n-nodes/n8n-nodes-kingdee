@@ -20,7 +20,7 @@
 
 ## 支持的资源与操作
 
-> 共计 **46 个资源**，覆盖基础资料、财务会计、供应链、生产制造、质量管理、税务管理等模块。
+> 共计 **47 个资源**，覆盖基础资料、财务会计、供应链、生产制造、质量管理、税务管理等模块。
 
 ### 基础资料
 
@@ -78,7 +78,7 @@
 
 | 资源 | FormId | 支持的操作 |
 |------|--------|-----------|
-| 销售订单 | SAL_SaleOrder | 查看、查询 |
+| 销售订单 | SAL_SaleOrder | 查看、查询、保存 |
 | 发货通知单 | SAL_DELIVERYNOTICE | 查看、查询 |
 | 销售出库单 | SAL_OUTSTOCK | 查看、查询 |
 
@@ -226,7 +226,7 @@ FUserAccount IN ('user1', 'user2', 'user3')
 ## 支持
 
 - 邮箱：luka.cat.mimi@gmail.com
-- [问题反馈](https://github.com/luka-n8n-nodes/n8n-nodes-feishu-project/issues)
+- [问题反馈](https://github.com/luka-n8n-nodes/n8n-nodes-kingdee/issues)
 
 ## 许可证
 
